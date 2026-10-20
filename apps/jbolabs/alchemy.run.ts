@@ -8,7 +8,6 @@ import {
   webAnalytics,
   leadMail,
   siteObservability,
-  siteSecrets,
   writeBuildInputs,
 } from "@jakebodea/cloudflare-kit/infra";
 /**
@@ -38,7 +37,9 @@ export default Alchemy.Stack(
   site.id,
   {
     providers: Layer.mergeAll(Cloudflare.providers(), RandomProvider()),
-    secrets: siteSecrets(root),
+    // No Infisical: CI deploys previews with no identity that may read
+    // jbolabs-dev, and the only secret (prod's CF_ANALYTICS_API_TOKEN) comes
+    // from the process env. See docs/adr/0002-infisical-secrets.md.
     state: Cloudflare.state(),
   },
   Effect.gen(function* stack() {

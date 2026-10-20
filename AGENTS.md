@@ -35,6 +35,14 @@ ALCHEMY_PROFILE=admin bun run plan:studio | plan:mail | plan:github   # read-onl
 
 The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`). See the `deploy` and `control-app` skills in `.agents/skills/`.
 
+## Agent secrets (Infisical)
+
+- Secrets come from Infisical through Alchemy (`Infisical.Secrets` in each stack). `stacks/secrets.ts` holds the project ids and maps stage → source: `prod` reads `jbolabs-prod`, `pr-*`/CI previews read nothing from Infisical, everything else reads `jbolabs-dev`.
+- Who can read what: Alchemy `default` profile = `agent-dev` (`*-dev` only); `admin` profile = `operator` (all; the owner's Mac only, pass `--profile admin`); CI = `ci-prod` via GitHub OIDC, only in jobs using the `production` environment (main only).
+- Agent setup, once per machine: export `INFISICAL_CLIENT_ID`/`INFISICAL_CLIENT_SECRET`, then `bun run setup:infisical`.
+- Never add prod values to `jbolabs-dev`, never give a PR job the `production` environment, and never read secrets via `process.env` in stacks (use `Config`).
+- `stacks/studio.ts` (stage `shared`, reads `FORWARD_TO`) also reads `jbolabs-prod`: plan and deploy it with `--profile admin` (`ALCHEMY_PROFILE=admin bun run plan:studio`). It is the only stack with `secrets: stageSecrets` today; the site, mail and github stacks read no Infisical values (`docs/adr/0002-infisical-secrets.md`).
+
 ## Never
 
 - Never export `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` locally: use `alchemy profile`.
@@ -42,7 +50,7 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 - Never deploy, destroy, or change cloud resources without Jake's explicit go-ahead for that action.
 - Never touch infrastructure outside Alchemy: no dashboard, `wrangler`, Cloudflare MCP write tools, or raw API writes. Mailflare's own runtime token (`CF_TOKEN`, minted in `stacks/mail.ts`) is the one exception: its domain onboarding writes the same settings `stacks/mail.ts` declares.
 - Never rename the `studio` or `jbolabs` stacks or their stages: their state predates this repo.
-- Never print or commit secrets. `.env` (main checkout only) holds `FORWARD_TO`, the verified Gmail destination.
+- Never print or commit secrets, or keep them in `.env`: they live in Infisical, and stacks read them through `stacks/secrets.ts`.
 - Never modify `mailflare/`. Update it with `git -C mailflare pull origin main`, mirror any new bindings from its `wrangler.jsonc` in `stacks/mail.ts`, then deploy.
 - Never add `@cloudflare/vite-plugin`, wrangler config, or an Astro `adapter` to the site: Alchemy owns that.
 - Never run Effect in islands. Islands are plain React; Effect stays on the server.

@@ -11,25 +11,24 @@
  * store: don't rename either.
  *
  * The domain was bought once with `cf registrar registrations create`;
- * Alchemy cannot register domains. Needs `FORWARD_TO` (your real inbox) in
- * the main checkout's `.env`: it stays a verified Email Routing destination so Mailflare
+ * Alchemy cannot register domains. Needs `FORWARD_TO` (your real inbox) from
+ * Infisical `jbolabs-prod` (`stacks/secrets.ts`), so deploy and plan with the
+ * operator profile: it stays a verified Email Routing destination so Mailflare
  * accounts can forward copies to it.
  */
-import { fileURLToPath } from "node:url";
-
-import { siteSecrets } from "@jakebodea/cloudflare-kit/infra";
 import * as Alchemy from "alchemy";
 import * as Cloudflare from "alchemy/Cloudflare";
 import * as RemovalPolicy from "alchemy/RemovalPolicy";
 import { Config, Effect } from "effect";
 
 import { studio } from "./config.ts";
+import { stageSecrets } from "./secrets.ts";
 
 export default Alchemy.Stack(
   "studio",
   {
     providers: Cloudflare.providers(),
-    secrets: siteSecrets(fileURLToPath(new URL("..", import.meta.url))),
+    secrets: stageSecrets,
     state: Cloudflare.state(),
   },
   Effect.gen(function* studioDomain() {
