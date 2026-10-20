@@ -37,11 +37,11 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 
 ## Agent secrets (Infisical)
 
-- Each repo has two Infisical projects. `jbolabs-dev` (env `dev`, id `c67ee6b5-31a8-41ac-ad0b-69740dfd2808`) holds development credentials; `jbolabs-prod` (envs `preview`, `prod`, id `1c276d13-9f86-4b7e-9248-5d2cf041f06e`) holds deployed-tier values.
-- Identities are trust tiers: `agent-dev` (Universal Auth; `INFISICAL_CLIENT_ID`/`INFISICAL_CLIENT_SECRET` in the agent environment) is Viewer on every `*-dev` project only. `ci-prod` (GitHub OIDC, `main` of any jbolabs repo) is Viewer on every `*-prod` project. Agents never get `*-prod` access.
+- Each repo has two Infisical projects. `jbolabs-dev` (env `dev`) holds development credentials; `jbolabs-prod` (envs `preview`, `prod`) holds deployed-tier values. Ids and the stage mapping live in `stacks/secrets.ts`: `prod` and `shared` read `jbolabs-prod`/`prod`, every other stage (PR previews included) reads `jbolabs-dev`/`dev`.
+- Identities are trust tiers: `agent-dev` (Universal Auth; `INFISICAL_CLIENT_ID`/`INFISICAL_CLIENT_SECRET` in the agent environment) is Viewer on every `*-dev` project only. `operator` (Jake's `admin` Alchemy profile) reads every project. `ci-prod` (GitHub OIDC, `main` of any jbolabs repo) is Viewer on every `*-prod` project. Agents never get `*-prod` access.
 - The free plan has no environment-scoped roles: the project is the access boundary. Never put prod or preview values in a `*-dev` project, or add a non-`dev` environment to one.
-- Deploy jobs load `jbolabs-prod` through `ci-prod` and Alchemy writes the values into Cloudflare.
-- Agent run: `bun run with-secrets -- <cmd>` (`scripts/with-dev-secrets.ts`: logs in with `INFISICAL_CLIENT_ID`/`INFISICAL_CLIENT_SECRET` and runs `infisical run` against `jbolabs-dev`, env `dev`; the project id lives in `.infisical.json`). Operator prod commands use `infisical run --projectId 1c276d13-9f86-4b7e-9248-5d2cf041f06e --env prod -- <cmd>`. Which keys go where: `docs/adr/0002-infisical-secrets.md`.
+- Stacks load secrets with Alchemy's native provider (`secrets: stackSecrets()`), never from `.env` or `infisical run`. Only `stacks/studio.ts` reads Infisical today (`FORWARD_TO`), and it is operator-deployed: `ALCHEMY_PROFILE=admin bun run plan:studio`. CI deploys only the site, which reads no Infisical values, so no CI job uses `ci-prod` yet.
+- Agent setup, once per machine: `bun run setup:agent` adds the `agent-dev` identity to the default Alchemy profile; Alchemy then mints a token on every run. Which keys go where: `docs/adr/0002-infisical-secrets.md`.
 
 ## Never
 
@@ -50,7 +50,7 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 - Never deploy, destroy, or change cloud resources without Jake's explicit go-ahead for that action.
 - Never touch infrastructure outside Alchemy: no dashboard, `wrangler`, Cloudflare MCP write tools, or raw API writes. Mailflare's own runtime token (`CF_TOKEN`, minted in `stacks/mail.ts`) is the one exception: its domain onboarding writes the same settings `stacks/mail.ts` declares.
 - Never rename the `studio` or `jbolabs` stacks or their stages: their state predates this repo.
-- Never print or commit secrets. `FORWARD_TO` (the verified Gmail destination) comes from Infisical; `.env` in the main checkout is a dev-only fallback. Never put prod or preview values in `.env`.
+- Never print or commit secrets, or keep them in `.env`: they live in Infisical, and stacks read them through `stacks/secrets.ts`.
 - Never modify `mailflare/`. Update it with `git -C mailflare pull origin main`, mirror any new bindings from its `wrangler.jsonc` in `stacks/mail.ts`, then deploy.
 - Never add `@cloudflare/vite-plugin`, wrangler config, or an Astro `adapter` to the site: Alchemy owns that.
 - Never run Effect in islands. Islands are plain React; Effect stays on the server.
