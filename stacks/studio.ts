@@ -22,13 +22,13 @@ import * as RemovalPolicy from "alchemy/RemovalPolicy";
 import { Config, Effect } from "effect";
 
 import { studio } from "./config.ts";
-import { stackSecrets } from "./secrets.ts";
+import { stageSecrets } from "./secrets.ts";
 
 export default Alchemy.Stack(
   "studio",
   {
     providers: Cloudflare.providers(),
-    secrets: stackSecrets(),
+    secrets: stageSecrets,
     state: Cloudflare.state(),
   },
   Effect.gen(function* studioDomain() {

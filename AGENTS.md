@@ -37,11 +37,11 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 
 ## Agent secrets (Infisical)
 
-- Each repo has two Infisical projects. `jbolabs-dev` (env `dev`) holds development credentials; `jbolabs-prod` (envs `preview`, `prod`) holds deployed-tier values. Ids and the stage mapping live in `stacks/secrets.ts`: `prod` and `shared` read `jbolabs-prod`/`prod`, every other stage (PR previews included) reads `jbolabs-dev`/`dev`.
-- Identities are trust tiers: `agent-dev` (Universal Auth; `INFISICAL_CLIENT_ID`/`INFISICAL_CLIENT_SECRET` in the agent environment) is Viewer on every `*-dev` project only. `operator` (Jake's `admin` Alchemy profile) reads every project. `ci-prod` (GitHub OIDC, `main` of any jbolabs repo) is Viewer on every `*-prod` project. Agents never get `*-prod` access.
-- The free plan has no environment-scoped roles: the project is the access boundary. Never put prod or preview values in a `*-dev` project, or add a non-`dev` environment to one.
-- Stacks load secrets with Alchemy's native provider (`secrets: stackSecrets()`), never from `.env` or `infisical run`. Only `stacks/studio.ts` reads Infisical today (`FORWARD_TO`), and it is operator-deployed: `ALCHEMY_PROFILE=admin bun run plan:studio`. CI deploys only the site, which reads no Infisical values, so no CI job uses `ci-prod` yet.
-- Agent setup, once per machine: `bun run setup:agent` adds the `agent-dev` identity to the default Alchemy profile; Alchemy then mints a token on every run. Which keys go where: `docs/adr/0002-infisical-secrets.md`.
+- Secrets come from Infisical through Alchemy (`Infisical.Secrets` in each stack). `stacks/secrets.ts` holds the project ids and maps stage → source: `prod` reads `jbolabs-prod`, `pr-*`/CI previews read nothing from Infisical, everything else reads `jbolabs-dev`.
+- Who can read what: Alchemy `default` profile = `agent-dev` (`*-dev` only); `admin` profile = `operator` (all; the owner's Mac only, pass `--profile admin`); CI = `ci-prod` via GitHub OIDC, only in jobs using the `production` environment (main only).
+- Agent setup, once per machine: export `INFISICAL_CLIENT_ID`/`INFISICAL_CLIENT_SECRET`, then `bun run setup:infisical`.
+- Never add prod values to `jbolabs-dev`, never give a PR job the `production` environment, and never read secrets via `process.env` in stacks (use `Config`).
+- `stacks/studio.ts` (stage `shared`, reads `FORWARD_TO`) also reads `jbolabs-prod`: plan and deploy it with `--profile admin` (`ALCHEMY_PROFILE=admin bun run plan:studio`). It is the only stack with `secrets: stageSecrets` today; the site, mail and github stacks read no Infisical values (`docs/adr/0002-infisical-secrets.md`).
 
 ## Never
 

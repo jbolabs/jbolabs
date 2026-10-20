@@ -16,6 +16,7 @@ import * as GitHub from "alchemy/GitHub";
 import { Effect, Layer } from "effect";
 
 import { accountId, deployTokens, repository } from "./config.ts";
+import { ciProd } from "./secrets.ts";
 
 /** What the site's Alchemy stack creates, on every stage. */
 const sitePermissions: Cloudflare.ApiToken.PermissionGroupRef[] = [
@@ -41,14 +42,19 @@ const productionPermissions: Cloudflare.ApiToken.PermissionGroupRef[] = [
 
 const account = { [`com.cloudflare.api.account.${accountId}`]: "*" };
 
-interface DeployEnvironment {
+export interface DeployEnvironment {
   readonly id: string;
   readonly name: string;
   readonly branches: { customBranchPolicies: string[] } | null;
   readonly permissions: Cloudflare.ApiToken.PermissionGroupRef[];
 }
 
-const environments: DeployEnvironment[] = [
+/**
+ * The only GitHub environment that may hold prod secrets is `production`, and
+ * only `main` may deploy to it (`github.test.ts`). Infisical's `ci-prod`
+ * trusts only jobs in this environment.
+ */
+export const environments: readonly DeployEnvironment[] = [
   {
     branches: null,
     id: "Preview",
@@ -147,6 +153,22 @@ export default Alchemy.Stack(
           owner,
           repository: repo,
           value: analyticsToken.value,
+        });
+        // A job reading jbolabs-prod declares `environment: production` and
+        // `id-token: write`, and passes these to Alchemy from `vars.*`.
+        yield* GitHub.Variable("ProductionInfisicalIdentity", {
+          environment: githubEnvironment,
+          name: "INFISICAL_IDENTITY_ID",
+          owner,
+          repository: repo,
+          value: ciProd.identityId,
+        });
+        yield* GitHub.Variable("ProductionInfisicalAudience", {
+          environment: githubEnvironment,
+          name: "INFISICAL_OIDC_AUDIENCE",
+          owner,
+          repository: repo,
+          value: ciProd.oidcAudience,
         });
       }
       yield* GitHub.Variable(`${environment.id}CloudflareAccount`, {

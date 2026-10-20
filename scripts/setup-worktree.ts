@@ -1,7 +1,7 @@
 /**
  * Prepares a new git worktree (run by T3 Code via `t3.json` and by lefthook's
  * `post-checkout`): installs dependencies. Secrets come from Infisical through
- * the Alchemy profile (`bun run setup:agent`), so there is no `.env` to link.
+ * the Alchemy profile (`bun run setup:infisical`), so there is no `.env` to link.
  *
  *   bun run setup:worktree
  */
