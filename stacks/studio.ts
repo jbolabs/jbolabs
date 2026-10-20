@@ -11,9 +11,9 @@
  * store: don't rename either.
  *
  * The domain was bought once with `cf registrar registrations create`;
- * Alchemy cannot register domains. Needs `FORWARD_TO` (your real inbox) in
- * the main checkout's `.env`: it stays a verified Email Routing destination so Mailflare
- * accounts can forward copies to it.
+ * Alchemy cannot register domains. Needs `FORWARD_TO` (your real inbox) from
+ * Infisical `jbolabs-prod` (docs/adr/0002-infisical-secrets.md): it stays a
+ * verified Email Routing destination so Mailflare accounts can forward copies to it.
  */
 import { fileURLToPath } from "node:url";
 
