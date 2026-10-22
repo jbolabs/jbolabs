@@ -1,5 +1,5 @@
 /**
- * Mailflare (https://github.com/hieunc229/mailflare): one inbox for every
+ * Mailflare (https://github.com/jbolabs/mailflare): one inbox for every
  * studio and product domain, served at inbox.jbolabs.com.
  *
  *   bun run build                        # builds the mailflare/ submodule
@@ -9,7 +9,7 @@
  * plugin, which reads `mailflare/wrangler.jsonc` only at build time) and
  * uploaded byte-for-byte with `bundle: false`. Every binding, resource and
  * DNS setting is declared here instead of in that wrangler file, so the
- * submodule stays an unmodified upstream checkout.
+ * submodule pins our maintained fork; source changes are reviewed there.
  *
  * Mailflare applies its own D1 migrations from the app (`/setup`, then
  * Admin → Update database), so the database has no `migrationsDir` here.
@@ -139,6 +139,13 @@ export default Alchemy.Stack(
         CF_EMAIL_WORKER_NAME: mailflare.workerName,
         CF_TOKEN: cfToken.value,
         DB: db,
+        DEVICE_LOGIN_RATE_LIMIT: Cloudflare.RateLimit(
+          "DEVICE_LOGIN_RATE_LIMIT",
+          {
+            namespaceId: 1003,
+            simple: { limit: 10, period: 60 },
+          }
+        ),
         EMAIL: Cloudflare.Email.SendEmail("EMAIL"),
         IMAGES: Cloudflare.Images.Images("IMAGES"),
         LOGIN_RATE_LIMIT: Cloudflare.RateLimit("LOGIN_RATE_LIMIT", {
