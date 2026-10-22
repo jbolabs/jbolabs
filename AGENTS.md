@@ -11,7 +11,7 @@ Everything for JBO Labs, Jake's own studio: the jbolabs.com website, the studio 
 | `stacks/mail.ts` | Mailflare at inbox.jbolabs.com: Worker, D1, R2, queues, catch-all routing, apex sending + DMARC for each domain in `mailDomains`. Stack `mail`, stage `prod` |
 | `stacks/github.ts` | CI control plane: GitHub environments, `main` ruleset, `preview` label, scoped deploy tokens. Stack `jbolabs-ci`, stage `ci` |
 | `stacks/config.ts` | Account, repository, studio addresses, Mailflare host and domains |
-| `mailflare/` | Upstream Mailflare as a git submodule, unmodified. Built with its own toolchain, uploaded with `bundle: false` |
+| `mailflare/` | JBO-owned `jbolabs/mailflare` fork as a pinned git submodule. Built with its own toolchain, uploaded with `bundle: false` |
 | `packages/cloudflare-kit` | Effect server services, Web Analytics, Alchemy helpers. Forked from `sites` without its EmDash modules |
 | `packages/control-app` | `bun run app -- …`: run, screenshot, record, smoke-test, SEO-audit the site |
 | `packages/config` | tsconfig + strict oxlint/oxfmt presets + local lint rules |
@@ -51,7 +51,7 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 - Never touch infrastructure outside Alchemy: no dashboard, `wrangler`, Cloudflare MCP write tools, or raw API writes. Mailflare's own runtime token (`CF_TOKEN`, minted in `stacks/mail.ts`) is the one exception: its domain onboarding writes the same settings `stacks/mail.ts` declares.
 - Never rename the `studio` or `jbolabs` stacks or their stages: their state predates this repo.
 - Never print or commit secrets, or keep them in `.env`: they live in Infisical, and stacks read them through `stacks/secrets.ts`.
-- Never modify `mailflare/`. Update it with `git -C mailflare pull origin main`, mirror any new bindings from its `wrangler.jsonc` in `stacks/mail.ts`, then deploy.
+- Make Mailflare source changes through PRs to `jbolabs/mailflare`, then pin the merged commit here. Import upstream through reviewed merges in that fork; mirror binding changes in `stacks/mail.ts`. Deploy only with explicit authorization.
 - Never add `@cloudflare/vite-plugin`, wrangler config, or an Astro `adapter` to the site: Alchemy owns that.
 - Never run Effect in islands. Islands are plain React; Effect stays on the server.
 - Never disable a lint rule inline without a `-- reason`.
