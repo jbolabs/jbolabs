@@ -9,7 +9,7 @@
  *   read nothing from Infisical: no PR job may hold an Infisical identity.
  * - Everything else (local `dev_*`, named previews) reads `jbolabs-dev`/`dev`.
  */
-import * as Infisical from "alchemy/Infisical";
+import * as Infisical from "@alchemy.run/infisical";
 import type { SecretsContext } from "alchemy/Secrets";
 
 /** Infisical project ids: `jbolabs-dev` (env `dev`) and `jbolabs-prod` (env `prod`). */

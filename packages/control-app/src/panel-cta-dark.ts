@@ -13,8 +13,6 @@ const relativeLuminance = (red: number, green: number, blue: number): number =>
   0.7152 * srgbChannel(green) +
   0.0722 * srgbChannel(blue);
 
-const RGB = /rgba?\((?<red>\d+),\s*(?<green>\d+),\s*(?<blue>\d+)/u;
-
 export interface PanelCtaDarkResult {
   readonly ok: boolean;
   readonly detail: string;
@@ -60,14 +58,26 @@ export const panelCtaReadableInDarkMode = async (
         return null;
       }
       const { backgroundColor } = getComputedStyle(element);
-      const match = RGB.exec(backgroundColor);
-      if (match?.groups === undefined) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      const drawingContext = canvas.getContext("2d");
+      if (drawingContext === null) {
         return null;
       }
+      // The browser resolves modern CSS colors (including oklab) to sRGB bytes.
+      drawingContext.fillStyle = backgroundColor;
+      drawingContext.fillRect(0, 0, 1, 1);
+      const [red = 0, green = 0, blue = 0] = drawingContext.getImageData(
+        0,
+        0,
+        1,
+        1
+      ).data;
       return {
-        blue: Number(match.groups.blue),
-        green: Number(match.groups.green),
-        red: Number(match.groups.red),
+        blue,
+        green,
+        red,
       };
     });
     await context.close();

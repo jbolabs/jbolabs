@@ -1,3 +1,4 @@
+import * as Cloudflare from "@alchemy.run/cloudflare";
 import {
   BUILD_INPUTS_FILE,
   TURNSTILE_TEST_KEYS,
@@ -22,7 +23,6 @@ import {
  */
 import * as Alchemy from "alchemy";
 import { AlchemyContext } from "alchemy/AlchemyContext";
-import * as Cloudflare from "alchemy/Cloudflare";
 import { RandomProvider } from "alchemy/Random";
 import * as RemovalPolicy from "alchemy/RemovalPolicy";
 import { Effect, Layer } from "effect";

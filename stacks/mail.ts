@@ -1,3 +1,4 @@
+import * as Cloudflare from "@alchemy.run/cloudflare";
 /**
  * Mailflare (https://github.com/jbolabs/mailflare): one inbox for every
  * studio and product domain, served at inbox.jbolabs.com.
@@ -15,7 +16,6 @@
  * Admin → Update database), so the database has no `migrationsDir` here.
  */
 import * as Alchemy from "alchemy";
-import * as Cloudflare from "alchemy/Cloudflare";
 import * as RemovalPolicy from "alchemy/RemovalPolicy";
 import { Effect } from "effect";
 
