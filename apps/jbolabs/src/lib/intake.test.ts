@@ -14,7 +14,7 @@ describe(IntakeForm, () => {
   it("accepts the listed options and rejects anything else", () => {
     const ok = Schema.decodeUnknownExit(IntakeForm)({
       ...base,
-      budget: "$5k to $15k",
+      budget: "$2k to $5k",
       services: ["New website", "Ongoing care"],
     });
     expect(Exit.isSuccess(ok)).toBeTruthy();
