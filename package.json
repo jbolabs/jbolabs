@@ -7,15 +7,15 @@
       "packages/*"
     ],
     "catalog": {
-      "@alchemy.run/frontend-frameworks": "2.0.0-beta.82",
+      "@alchemy.run/frontend-frameworks": "2.0.0-beta.84",
       "@astrojs/check": "0.9.10",
       "@astrojs/cloudflare": "14.3.3",
       "@astrojs/react": "6.0.6",
       "@base-ui/react": "1.8.0",
       "@cloudflare/workers-types": "5.20261005.1",
-      "@effect/platform-bun": "4.0.4",
-      "@effect/platform-node": "4.0.4",
-      "@effect/vitest": "4.0.4",
+      "@effect/platform-bun": "4.0.6",
+      "@effect/platform-node": "4.0.6",
+      "@effect/vitest": "4.0.6",
       "@emnapi/core": "1.11.3",
       "@emnapi/runtime": "1.11.3",
       "@lucide/astro": "1.52.0",
@@ -23,11 +23,11 @@
       "@types/bun": "1.4.2",
       "@types/react": "19.2.18",
       "@types/react-dom": "19.2.7",
-      "alchemy": "2.0.0-beta.82",
+      "alchemy": "2.0.0-beta.84",
       "astro": "7.3.5",
       "class-variance-authority": "0.7.1",
       "clsx": "2.1.1",
-      "effect": "4.0.4",
+      "effect": "4.0.6",
       "lucide-react": "1.52.0",
       "react": "19.2.4",
       "react-dom": "19.2.4",
@@ -36,7 +36,10 @@
       "tw-animate-css": "1.4.0",
       "typescript": "7.0.2",
       "vitest": "5.0.3",
-      "wrangler": "4.147.0"
+      "wrangler": "4.147.0",
+      "@alchemy.run/cloudflare": "2.0.0-beta.84",
+      "@alchemy.run/github": "2.0.0-beta.84",
+      "@alchemy.run/infisical": "2.0.0-beta.84"
     },
     "catalogs": {
       "typescript-api": {
@@ -73,6 +76,9 @@
     "deploy:github": "alchemy deploy stacks/github.ts --stage ci"
   },
   "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:",
+    "@alchemy.run/github": "catalog:",
+    "@alchemy.run/infisical": "catalog:",
     "@cloudflare/workers-types": "catalog:",
     "@effect/platform-bun": "catalog:",
     "@effect/platform-node": "catalog:",
@@ -97,10 +103,13 @@
     "vitest": "catalog:"
   },
   "overrides": {
-    "@effect/platform-node-shared": "4.0.4"
+    "@effect/platform-node-shared": "4.0.6"
   },
   "engines": {
     "bun": ">=1.4.2"
   },
-  "packageManager": "bun@1.4.2"
+  "packageManager": "bun@1.4.2",
+  "patchedDependencies": {
+    "@alchemy.run/cloudflare@2.0.0-beta.84": "patches/@alchemy.run%2Fcloudflare@2.0.0-beta.84.patch"
+  }
 }

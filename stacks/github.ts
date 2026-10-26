@@ -1,3 +1,5 @@
+import * as Cloudflare from "@alchemy.run/cloudflare";
+import * as GitHub from "@alchemy.run/github";
 /**
  * CI control plane, as code: the repository's GitHub environments, the `main`
  * ruleset, the `preview` label, and scoped, expiring Cloudflare deploy tokens
@@ -11,8 +13,6 @@
  * deploys from CI; `studio.ts` and `mail.ts` deploy from a shell.
  */
 import * as Alchemy from "alchemy";
-import * as Cloudflare from "alchemy/Cloudflare";
-import * as GitHub from "alchemy/GitHub";
 import { Effect, Layer } from "effect";
 
 import { accountId, deployTokens, repository } from "./config.ts";

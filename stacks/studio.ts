@@ -1,3 +1,4 @@
+import * as Cloudflare from "@alchemy.run/cloudflare";
 /**
  * The studio domain: the jbolabs.com zone, its registrar settings, the
  * `mail.` sending subdomain the marketing sites send from, and Email Routing.
@@ -17,7 +18,6 @@
  * accounts can forward copies to it.
  */
 import * as Alchemy from "alchemy";
-import * as Cloudflare from "alchemy/Cloudflare";
 import * as RemovalPolicy from "alchemy/RemovalPolicy";
 import { Config, Effect } from "effect";
 
