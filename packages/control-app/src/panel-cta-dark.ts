@@ -13,8 +13,6 @@ const relativeLuminance = (red: number, green: number, blue: number): number =>
   0.7152 * srgbChannel(green) +
   0.0722 * srgbChannel(blue);
 
-const RGB = /rgba?\((?<red>\d+),\s*(?<green>\d+),\s*(?<blue>\d+)/u;
-
 export interface PanelCtaDarkResult {
   readonly ok: boolean;
   readonly detail: string;
@@ -54,21 +52,31 @@ export const panelCtaReadableInDarkMode = async (
         skipped: false,
       };
     }
+    // Runs in the page, so it cannot see this module's bindings. Computed
+    // colors come back in whatever space the CSS used (oklch here), so paint
+    // one pixel and read sRGB bytes instead of parsing the string.
     const rgb = await link.evaluate((element) => {
-      const className = element.getAttribute("class") ?? "";
-      if (!className.includes("bg-panel-foreground")) {
+      if (
+        !(element.getAttribute("class") ?? "").includes("bg-panel-foreground")
+      ) {
         return null;
       }
-      const { backgroundColor } = getComputedStyle(element);
-      const match = RGB.exec(backgroundColor);
-      if (match?.groups === undefined) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      const context2d = canvas.getContext("2d");
+      if (context2d === null) {
         return null;
       }
-      return {
-        blue: Number(match.groups.blue),
-        green: Number(match.groups.green),
-        red: Number(match.groups.red),
-      };
+      context2d.fillStyle = getComputedStyle(element).backgroundColor;
+      context2d.fillRect(0, 0, 1, 1);
+      const [red = 0, green = 0, blue = 0] = context2d.getImageData(
+        0,
+        0,
+        1,
+        1
+      ).data;
+      return { blue, green, red };
     });
     await context.close();
     if (rgb === null) {

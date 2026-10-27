@@ -54,8 +54,8 @@ export const workPage = {
     link: startProject,
   } satisfies CallToAction,
   description:
-    "Websites Jake Bodea has built at JBO Labs for small businesses, including Access Electric and MS Custom Homes.",
-  intro: "Two businesses, two very different sites.",
+    "Websites Jake Bodea has built at JBO Labs for small businesses, from contractors and builders to lenders.",
+  intro: "Every business is different, and so is every site.",
   items: [
     {
       body: "A portfolio-led site for a commercial contractor that has wired schools, offices, and warehouses since 2001. They add new projects themselves.",
@@ -70,6 +70,13 @@ export const workPage = {
       kind: "Custom home builder",
       name: "MS Custom Homes",
     },
+    {
+      body: "A fast, bilingual site for a home equity lender, with a live calculator that shows homeowners their estimated line before they apply. Their team edits the copy themselves.",
+      href: "https://equityfast.homes",
+      image: "/work/equityfast.webp",
+      kind: "Home equity lender",
+      name: "EquityFast",
+    },
   ],
   title: "Work",
 };
@@ -80,7 +87,7 @@ export const productsPage = {
     link: startProject,
   } satisfies CallToAction,
   description:
-    "Products made by Jake Bodea at JBO Labs: PCOBooster for worship teams, Shouldertap for Mac, and Super Simple Secret Santa.",
+    "Software Jake Bodea builds and runs at JBO Labs alongside client work, made with the same care as every client project.",
   intro:
     "Between client projects I build my own products. They get the same care as client work, and they keep my skills sharp.",
   title: "Products",
