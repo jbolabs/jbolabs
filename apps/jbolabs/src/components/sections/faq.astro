@@ -21,10 +21,10 @@ const { value } = Astro.props;
             {item.question}
             <span class="relative size-3 shrink-0 text-muted-foreground" aria-hidden="true">
               <span class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-current"></span>
-              <span class="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-current transition-transform duration-200 group-open:rotate-90"></span>
+              <span class="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-current transition-transform duration-200 ease-out-expo group-open:rotate-90"></span>
             </span>
           </summary>
-          <p class="-mt-2 max-w-xl pb-6 leading-relaxed text-muted-foreground">{item.answer}</p>
+          <p class="disclose -mt-2 max-w-xl pb-6 leading-relaxed text-muted-foreground">{item.answer}</p>
         </details>
       ))}
     </div>

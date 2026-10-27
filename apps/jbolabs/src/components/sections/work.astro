@@ -27,7 +27,7 @@ const { value } = Astro.props;
         <h2 class="mt-2 text-xl font-medium tracking-[-0.015em]">{item.name}</h2>
         <p class="mt-2 max-w-md leading-relaxed text-muted-foreground">{item.body}</p>
         {item.href && (
-          <a href={item.href} class="mt-4 inline-flex items-center gap-1 font-medium underline-offset-4 hover:underline">Visit {new URL(item.href).hostname}<ArrowUpRight class="size-4" aria-hidden="true" /></a>
+          <a href={item.href} class="mt-4 inline-flex items-center gap-1 font-medium underline-offset-4 hover:underline">Visit {new URL(item.href).hostname}<ArrowUpRight class="nudge-up-right size-4" aria-hidden="true" /></a>
         )}
       </li>
     ))}
@@ -35,7 +35,7 @@ const { value } = Astro.props;
   {value.aside && (
     <p class="mt-16 border-t border-border pt-8 text-muted-foreground">
       {value.aside.text}
-      <a href={value.aside.link.href} class="ml-1 inline-flex items-center gap-1 font-medium text-foreground underline-offset-4 hover:underline">{value.aside.link.label}<ArrowRight class="size-4" aria-hidden="true" /></a>
+      <a href={value.aside.link.href} class="ml-1 inline-flex items-center gap-1 font-medium text-foreground underline-offset-4 hover:underline">{value.aside.link.label}<ArrowRight class="nudge-right size-4" aria-hidden="true" /></a>
     </p>
   )}
 </section>

@@ -24,7 +24,7 @@ const { items } = Astro.props;
           </p>
           <p class="mt-6 max-w-xl leading-relaxed text-muted-foreground">{product.description}</p>
           {product.href && (
-            <a href={product.href} class="mt-6 inline-flex items-center gap-1 font-medium underline-offset-4 hover:underline">Visit {product.name}<ArrowUpRight class="size-4" aria-hidden="true" /></a>
+            <a href={product.href} class="mt-6 inline-flex items-center gap-1 font-medium underline-offset-4 hover:underline">Visit {product.name}<ArrowUpRight class="nudge-up-right size-4" aria-hidden="true" /></a>
           )}
         </div>
         {product.image && (

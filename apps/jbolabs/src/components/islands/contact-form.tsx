@@ -398,16 +398,16 @@ const ContactForm = ({ turnstileSiteKey }: ContactFormProps) => {
     return (
       <output className="flex flex-col items-start gap-5 py-6 sm:py-10">
         <span
-          className="bg-signal-soft text-signal flex size-12 items-center justify-center rounded-full"
+          className="pop bg-signal-soft text-signal flex size-12 items-center justify-center rounded-full"
           aria-hidden="true"
         >
           <CheckIcon className="size-5" strokeWidth={2.5} />
         </span>
-        <h2 className="display text-4xl leading-tight sm:text-5xl">
+        <h2 className="rise display text-4xl leading-tight delay-80 sm:text-5xl">
           Thank you.{" "}
           <strong className="headline-strong">Your note is in.</strong>
         </h2>
-        <p className="text-muted-foreground max-w-md text-lg leading-relaxed">
+        <p className="rise text-muted-foreground max-w-md text-lg leading-relaxed delay-160">
           I read every enquiry personally and will reply by email within two
           business days.
         </p>
