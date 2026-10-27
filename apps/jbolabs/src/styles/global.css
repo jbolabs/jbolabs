@@ -288,8 +288,70 @@ html[data-nav-open] header {
   animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Reduced motion keeps the fade and drops the movement. */
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rise {
-    animation: none;
+    animation: fade 200ms ease-out both;
+  }
+}
+
+/* The contact form's sent badge: a small overshoot, kept for that one rare moment. */
+@keyframes pop {
+  from {
+    opacity: 0;
+    scale: 0.9;
+  }
+}
+
+@utility pop {
+  animation: pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: fade 200ms ease-out both;
+  }
+}
+
+/* A <details> answer settles in when it opens; closing stays instant, so a keyframe never fights an exit. */
+@keyframes disclose {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+
+@utility disclose {
+  details[open] > & {
+    animation: disclose 200ms var(--ease-out-expo);
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: fade 200ms ease-out;
+    }
+  }
+}
+
+/* Trailing arrows on links lean toward where the link goes while it is hovered. */
+@utility nudge-up-right {
+  transition: translate 160ms var(--ease-out-expo);
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    a:hover > & {
+      translate: 2px -2px;
+    }
+  }
+}
+
+@utility nudge-right {
+  transition: translate 160ms var(--ease-out-expo);
+
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    a:hover > & {
+      translate: 2px 0;
+    }
   }
 }
