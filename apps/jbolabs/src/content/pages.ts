@@ -54,28 +54,54 @@ export const workPage = {
     link: startProject,
   } satisfies CallToAction,
   description:
-    "Websites Jake Bodea has built at JBO Labs for small businesses, from contractors and builders to lenders.",
+    "Websites Jake Bodea has built at JBO Labs for small businesses, from contractors and lenders to salons.",
   intro: "Every business is different, and so is every site.",
   items: [
     {
       body: "A portfolio-led site for a commercial contractor that has wired schools, offices, and warehouses since 2001. They add new projects themselves.",
+      highlights: ["Project portfolio", "Edited by their team"],
       href: "https://accesselectricinc.com",
-      image: "/work/access-electric.webp",
       kind: "Electrical contractor",
       name: "Access Electric",
+      screenshots: {
+        desktop: "/work/access-electric.webp",
+        phone: "/work/access-electric-phone.webp",
+      },
     },
     {
-      body: "A calm, photo-first site for a woman-owned builder, with a full portfolio and a financing page for homeowners planning a remodel.",
-      image: "/work/ms-custom-homes.webp",
-      kind: "Custom home builder",
-      name: "MS Custom Homes",
+      body: "A warm, editorial site for a European master stylist in Irvine, with booking built in. Clients pick a service and a time, share photos of their hair, and the appointment shows up on her calendar.",
+      highlights: ["Online booking", "Calendar sync", "Hair Q&A articles"],
+      kind: "Hairstylist",
+      name: "Ani Wenger",
+      screenshots: {
+        desktop: "/work/ani-wenger.webp",
+        phone: "/work/ani-wenger-phone.webp",
+      },
     },
     {
       body: "A fast, bilingual site for a home equity lender, with a live calculator that shows homeowners their estimated line before they apply. Their team edits the copy themselves.",
+      highlights: [
+        "English and Spanish",
+        "Live calculator",
+        "Online applications",
+      ],
       href: "https://equityfast.homes",
-      image: "/work/equityfast.webp",
       kind: "Home equity lender",
       name: "EquityFast",
+      screenshots: {
+        desktop: "/work/equityfast.webp",
+        phone: "/work/equityfast-phone.webp",
+      },
+    },
+    {
+      body: "A calm, photo-first site for a woman-owned builder, with a full portfolio and a financing page for homeowners planning a remodel.",
+      highlights: ["Photo portfolio", "Remodel financing"],
+      kind: "Custom home builder",
+      name: "MS Custom Homes",
+      screenshots: {
+        desktop: "/work/ms-custom-homes.webp",
+        phone: "/work/ms-custom-homes-phone.webp",
+      },
     },
   ],
   title: "Work",

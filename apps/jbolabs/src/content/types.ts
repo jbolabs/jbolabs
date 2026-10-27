@@ -65,15 +65,17 @@ export interface ListSection {
   readonly items: readonly ListItem[];
 }
 
-/** A client site, shown with a screenshot of its home page. */
+/** A client site, shown as its home page on a desktop and a phone. */
 export interface WorkItem {
   readonly name: string;
   /** What the business is, e.g. "Custom home builder". */
   readonly kind: string;
   readonly body: string;
-  /** A 16:10 screenshot under `public/`. */
-  readonly image: string;
-  /** The live site, once it is on its own domain. */
+  /** Two to four short things the site does, e.g. "Online booking". */
+  readonly highlights: readonly string[];
+  /** Home page captures under `public/work/`: 1200x750 at 1280 wide, 600x1299 at 390 wide. */
+  readonly screenshots: { readonly desktop: string; readonly phone: string };
+  /** The live site, once it is on its own domain; without one it shows as launching soon. */
   readonly href?: string;
 }
 
