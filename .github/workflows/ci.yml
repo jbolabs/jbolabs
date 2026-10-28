@@ -12,12 +12,14 @@ permissions:
   contents: read
 
 jobs:
-  # The `main` ruleset (stacks/github.ts) requires this context.
-  check:
+  # lint, test and build run in parallel; `check` gates on all three. Each job keeps its own
+  # concurrency group (a shared one would make them cancel each other). The `labels` suffix keeps
+  # a non-preview label event from cancelling the code run on the same commit.
+  lint:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     concurrency:
-      group: check-${{ github.event.pull_request.number || github.sha }}-${{ github.event.action == 'labeled' && github.event.label.name != 'preview' && 'labels' || 'code' }}
+      group: lint-${{ github.event.pull_request.number || github.sha }}-${{ github.event.action == 'labeled' && github.event.label.name != 'preview' && 'labels' || 'code' }}
       cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -26,10 +28,61 @@ jobs:
       - uses: ./.github/actions/setup
       - name: Lint
         run: bun run lint:ci
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: test-${{ github.event.pull_request.number || github.sha }}-${{ github.event.action == 'labeled' && github.event.label.name != 'preview' && 'labels' || 'code' }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      # PRs replay turbo's cache, so only packages whose inputs changed are rechecked (a docs-only
+      # change rechecks nothing). Cross-package files must be listed in turbo.json inputs.
+      - uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.0.3
+        with:
+          path: .turbo/cache
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-${{ runner.os }}-
+      # main (the deploy gate) ignores cache hits and re-runs everything, refreshing the cache.
       - name: Typecheck and test
+        env:
+          TURBO_FORCE: ${{ github.event_name != 'pull_request' }}
         run: bunx turbo run typecheck test //#typecheck:root //#test:root
+
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: build-${{ github.event.pull_request.number || github.sha }}-${{ github.event.action == 'labeled' && github.event.label.name != 'preview' && 'labels' || 'code' }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
       - name: Build (no Cloudflare credentials)
         run: bun run build
+
+  # The `main` ruleset (stacks/github.ts) requires this context. It runs even when a job above
+  # fails, so the context always reports instead of sitting at "skipped".
+  check:
+    needs: [lint, test, build]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require lint, test and build
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "lint, test, build: $RESULTS"
+          for result in $RESULTS; do
+            [ "$result" = success ] || exit 1
+          done
 
   preview:
     needs: check

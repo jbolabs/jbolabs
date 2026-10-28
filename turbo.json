@@ -1,7 +1,11 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "stream",
-  "globalDependencies": ["tsconfig.json", "packages/config/tsconfig.base.json"],
+  "globalDependencies": [
+    "tsconfig.json",
+    "packages/config/tsconfig.base.json",
+    "bunfig.toml"
+  ],
   "tasks": {
     "typecheck": {
       "dependsOn": ["sync"],
@@ -48,7 +52,12 @@
       "env": ["ASTRO_STANDALONE_BUILD"]
     },
     "//#typecheck:root": {
-      "inputs": ["tsconfig.json", "scripts/**", "stacks/**"],
+      "inputs": [
+        "tsconfig.json",
+        "scripts/**",
+        "stacks/**",
+        "apps/jbolabs/site.config.ts"
+      ],
       "outputs": []
     },
     "//#test:root": {
@@ -56,6 +65,7 @@
         "vitest.config.ts",
         "scripts/**",
         "stacks/*.ts",
+        "apps/jbolabs/site.config.ts",
         ".github/workflows/*.yml"
       ],
       "outputs": []
