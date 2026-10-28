@@ -1,8 +1,8 @@
 /**
  * The studio domain: the jbolabs.com zone, its registrar settings, the
  * `mail.` sending subdomain the marketing sites send from, and Email Routing.
- * Inbound mail for every address is handled by Mailflare (`stacks/mail.ts`
- * claims the catch-all).
+ * Inbound mail for every address is handled by jbolabs/mailflare, which
+ * owns the catch-all in its unchanged `mail` / `prod` Alchemy stack.
  *
  *   ALCHEMY_PROFILE=admin bun alchemy deploy stacks/studio.ts --stage shared
  *

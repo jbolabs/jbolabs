@@ -1,6 +1,6 @@
 # jbolabs
 
-Everything for JBO Labs, Jake's own studio: the jbolabs.com website, the studio domain and its email, and the Mailflare inbox. Client sites live in `~/code/projects/sites`. Cloudflare Workers, deployed with Alchemy v2; server code is Effect 4.
+Everything for JBO Labs, Jake's own studio: the jbolabs.com website, the studio domain and its email, and shared studio email configuration. Mailflare lives in `jbolabs/mailflare`. Client sites live in `~/code/projects/sites`. Cloudflare Workers, deployed with Alchemy v2; server code is Effect 4.
 
 ## Map
 
@@ -8,10 +8,8 @@ Everything for JBO Labs, Jake's own studio: the jbolabs.com website, the studio 
 | --- | --- |
 | `apps/jbolabs/` | The jbolabs.com site (Astro, no CMS): `alchemy.run.ts` (stack `jbolabs`), `site.config.ts`, copy in `src/content/*.ts`, leads in D1. Imported from `sites` with its history |
 | `stacks/studio.ts` | jbolabs.com registrar, zone, `mail.jbolabs.com` sending subdomain (the client sites send from it too), Email Routing. Stack `studio`, stage `shared` |
-| `stacks/mail.ts` | Mailflare at inbox.jbolabs.com: Worker, D1, R2, queues, catch-all routing, apex sending + DMARC for each domain in `mailDomains`. Stack `mail`, stage `prod` |
 | `stacks/github.ts` | CI control plane: GitHub environments, `main` ruleset, `preview` label, scoped deploy tokens. Stack `jbolabs-ci`, stage `ci` |
-| `stacks/config.ts` | Account, repository, studio addresses, Mailflare host and domains |
-| `mailflare/` | JBO-owned `jbolabs/mailflare` fork as a pinned git submodule. Built with its own toolchain, uploaded with `bundle: false` |
+| `stacks/config.ts` | Account, repository and shared studio addresses |
 | `packages/cloudflare-kit` | Effect server services, Web Analytics, Alchemy helpers. Forked from `sites` without its EmDash modules |
 | `packages/control-app` | `bun run app -- …`: run, screenshot, record, smoke-test, SEO-audit the site |
 | `packages/config` | tsconfig + strict oxlint/oxfmt presets + local lint rules |
@@ -30,7 +28,7 @@ bun run app -- screenshot / /contact      # full-page PNGs at 1280 and 375
 bun run ci                  # lint (zero warnings) + typecheck + tests
 bun run build               # credential-free production build of the site
 bun run fix                 # format + autofix
-ALCHEMY_PROFILE=admin bun run plan:studio | plan:mail | plan:github   # read-only diffs
+ALCHEMY_PROFILE=admin bun run plan:studio | plan:github   # read-only diffs
 ```
 
 The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`). See the `deploy` and `control-app` skills in `.agents/skills/`.
@@ -41,17 +39,17 @@ The Alchemy profile comes from `ALCHEMY_PROFILE` (e.g. `ALCHEMY_PROFILE=admin`).
 - Who can read what: Alchemy `default` profile = `agent-dev` (`*-dev` only); `admin` profile = `operator` (all; the owner's Mac only, pass `--profile admin`); CI = `ci-prod` via GitHub OIDC, only in jobs using the `production` environment (main only).
 - Agent setup, once per machine: export `INFISICAL_CLIENT_ID`/`INFISICAL_CLIENT_SECRET`, then `bun run setup:infisical`.
 - Never add prod values to `jbolabs-dev`, never give a PR job the `production` environment, and never read secrets via `process.env` in stacks (use `Config`).
-- `stacks/studio.ts` (stage `shared`, reads `FORWARD_TO`) also reads `jbolabs-prod`: plan and deploy it with `--profile admin` (`ALCHEMY_PROFILE=admin bun run plan:studio`). It is the only stack with `secrets: stageSecrets` today; the site, mail and github stacks read no Infisical values (`docs/adr/0002-infisical-secrets.md`).
+- `stacks/studio.ts` (stage `shared`, reads `FORWARD_TO`) also reads `jbolabs-prod`: plan and deploy it with `--profile admin` (`ALCHEMY_PROFILE=admin bun run plan:studio`). It is the only stack with `secrets: stageSecrets` today; the site and github stacks read no Infisical values (`docs/adr/0002-infisical-secrets.md`).
 
 ## Never
 
 - Never export `CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` locally: use `alchemy profile`.
 - Never deploy the site's `prod` from a shell. It deploys from CI on merge to `main`; the stack refuses otherwise.
 - Never deploy, destroy, or change cloud resources without Jake's explicit go-ahead for that action.
-- Never touch infrastructure outside Alchemy: no dashboard, `wrangler`, Cloudflare MCP write tools, or raw API writes. Mailflare's own runtime token (`CF_TOKEN`, minted in `stacks/mail.ts`) is the one exception: its domain onboarding writes the same settings `stacks/mail.ts` declares.
+- Never touch infrastructure outside Alchemy: no dashboard, `wrangler`, Cloudflare MCP write tools, or raw API writes. Mailflare's own runtime token (`CF_TOKEN`, minted in the fork’s `mail` stack) is the one exception: its domain onboarding writes the same settings `stacks/mail.ts` declares.
 - Never rename the `studio` or `jbolabs` stacks or their stages: their state predates this repo.
 - Never print or commit secrets, or keep them in `.env`: they live in Infisical, and stacks read them through `stacks/secrets.ts`.
-- Make Mailflare source changes through PRs to `jbolabs/mailflare`, then pin the merged commit here. Import upstream through reviewed merges in that fork; mirror binding changes in `stacks/mail.ts`. Deploy only with explicit authorization.
+- Mailflare source, runtime and releases belong to `jbolabs/mailflare`; never restore parent pins or a second runtime stack. Preserve `mail` / `prod` state identity during the handoff in `docs/adr/0004-mailflare-runtime-ownership.md`. Deploy only with explicit authorization.
 - Never add `@cloudflare/vite-plugin`, wrangler config, or an Astro `adapter` to the site: Alchemy owns that.
 - Never run Effect in islands. Islands are plain React; Effect stays on the server.
 - Never disable a lint rule inline without a `-- reason`.

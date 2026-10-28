@@ -1,5 +1,7 @@
 # Maintained Mailflare fork
 
+The submodule and release ownership described here is superseded by [ADR 0004](0004-mailflare-runtime-ownership.md). The fork and upstream-review policy still applies.
+
 ## Decision
 
 Mailflare application changes belong to the JBO-owned `jbolabs/mailflare` fork. This repository keeps it as a pinned `mailflare/` git submodule and owns the installation's infrastructure in `stacks/mail.ts`. Publishing changes to `hieunc229/mailflare` is optional and is not part of our implementation or release process.

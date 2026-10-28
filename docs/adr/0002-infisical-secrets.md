@@ -55,7 +55,7 @@ No PR job ever gets the `production` environment.
 | --- | --- | --- | --- |
 | `stacks/studio.ts` (`shared`) | operator, `--profile admin` | `stageSecrets` | `FORWARD_TO` (required), from `jbolabs-prod`/`prod` |
 | `apps/jbolabs` (`prod`, `pr-*`, local) | CI, `alchemy dev` | none | `CF_ANALYTICS_API_TOKEN` on prod (optional), from the process env: a `production` GitHub secret minted by `stacks/github.ts` |
-| `stacks/mail.ts` (`prod`) | operator | none | nothing; Mailflare's `CF_TOKEN` is minted in the stack |
+| Mailflare (`jbolabs/mailflare`, `mail` / `prod`) | operator | none | runtime token minted in the fork-owned stack; see ADR 0004 |
 | `stacks/github.ts` (`ci`) | operator | none | nothing; needs a GitHub login (`gh auth login` or `GITHUB_TOKEN`) |
 
 The site stack does not use `stageSecrets` yet, even though `pr-*` previews would safely read nothing. Its prod deploy runs in CI. With `stageSecrets`, that deploy would need the `ci-prod` OIDC login above to succeed on every merge. That depends on the operator first deploying `stacks/github.ts` (for the variables) and on `ci-prod` trusting the `environment:production` subject. All of that risk would be taken for zero values, because the site reads nothing from Infisical. Switch it to `stageSecrets` together with the CI `env`/`id-token` change once it needs an Infisical value.

@@ -31,3 +31,6 @@ emdash-env.d.ts
 # OS / editors
 .DS_Store
 .idea/
+
+# Preserve existing local Mailflare clones after removing the former submodule.
+/mailflare/
