@@ -28,14 +28,13 @@ bun run app -- smoke --url "$(bun ../../scripts/ci/origin.ts <stage>)"
 
 When a deployed stage misbehaves, read its logs (`ALCHEMY_PROFILE=admin bun alchemy logs --stage <stage> --since 1h`), fix the cause in code, and redeploy.
 
-## Studio domain and Mailflare (from a shell, with go-ahead)
+## Studio domain (from a shell, with go-ahead)
 
 ```bash
 ALCHEMY_PROFILE=admin bun run plan:studio && ALCHEMY_PROFILE=admin bun run deploy:studio
-ALCHEMY_PROFILE=admin bun run plan:mail && ALCHEMY_PROFILE=admin bun run deploy:mail
 ```
 
-`deploy:mail` builds the `mailflare/` submodule first. After a Mailflare update, apply pending database migrations from Mailflare's Admin settings.
+Mailflare's runtime, production plan and deployment live in `jbolabs/mailflare`. Follow [the ownership handoff](../../../docs/adr/0004-mailflare-runtime-ownership.md). Never deploy or destroy its existing `mail` / `prod` stack from this repository.
 
 ## CI control plane (once, then to rotate)
 

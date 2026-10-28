@@ -8,7 +8,8 @@
  *
  * Needs an Alchemy profile that can create Cloudflare API tokens and a GitHub
  * login (`gh auth login`). Deploy once, again to rotate. Only the jbolabs site
- * deploys from CI; `studio.ts` and `mail.ts` deploy from a shell.
+ * deploys from this repository’s CI; `studio.ts` deploys from a shell.
+ * Mailflare owns its runtime and production workflow in jbolabs/mailflare.
  */
 import * as Alchemy from "alchemy";
 import * as Cloudflare from "alchemy/Cloudflare";
