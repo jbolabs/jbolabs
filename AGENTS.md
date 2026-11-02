@@ -2,6 +2,13 @@
 
 Everything for JBO Labs, Jake's own studio: the jbolabs.com website, the studio domain and its email, and shared studio email configuration. Mailflare lives in `jbolabs/mailflare`. Client sites live in `~/code/projects/sites`. Cloudflare Workers, deployed with Alchemy v2; server code is Effect 4.
 
+## Product bar
+
+Build every app and site to the bar of Linear's website or Apple Notes: simple purpose, simple architecture, simple design, simple implementation.
+
+- Cut taglines, helper text and secondary labels. If a screen needs them to make sense, fix the layout.
+- Every decision should improve user experience (UX), developer experience (DX) and agent experience (AX) at once, without breaking anything.
+
 ## Map
 
 | Path | What lives there |
