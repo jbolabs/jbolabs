@@ -13,10 +13,10 @@ export const SERVICES = [
 ] as const;
 
 export const BUDGETS = [
-  "Under $5k",
-  "$5k to $15k",
-  "$15k to $40k",
-  "$40k or more",
+  "Under $2k",
+  "$2k to $5k",
+  "$5k to $10k",
+  "$10k or more",
   "Not sure yet",
 ] as const;
 
