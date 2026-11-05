@@ -71,6 +71,7 @@ export const workPage = {
     {
       body: "A warm, editorial site for a European master stylist in Irvine, with booking built in. Clients pick a service and a time, share photos of their hair, and the appointment shows up on her calendar.",
       highlights: ["Online booking", "Calendar sync", "Hair Q&A articles"],
+      href: "https://aniwenger.hair",
       kind: "Hairstylist",
       name: "Ani Wenger",
       screenshots: {
